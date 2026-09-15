@@ -61,8 +61,8 @@ bullet), `usbsettings 1.1.9` (**new** — a mounted USB drive now lands on
 `/media/usb` instead of a folder inside `/media/internal`, so it stops showing as an empty folder in
 Internalz Pro and stops swallowing files onto internal storage; see the package bullet),
 `com.palm.app.backup 3.1.1` (**3.1.1** fixes a restore that silently restored only part of a backup
-and still reported success; see the package bullet), `tls-updates 1.0.19`
-(version-floors browser `>= 1.1.2` / usbsettings `>= 1.1.9` / btgamepad `>= 1.1.0` / luna
+and still reported success; see the package bullet), `tls-updates 1.0.20`
+(**1.0.20** adds `org.webosarchive.media-tls13` as an unversioned member — see its bullet; version-floors browser `>= 1.1.2` / usbsettings `>= 1.1.9` / btgamepad `>= 1.1.0` / luna
 `>= 1.1.4` / mail `>= 1.3.2` / downloadmgr `>= 1.1.0` / **`com.palm.app.accounts >= 3.1.1`** /
 **`com.palm.app.backup >= 3.1.1`**; also
 pulls in `ntpdate-sync`, `downloadmgr-tls13` and `com.palm.app.backup` — apps break
@@ -73,6 +73,22 @@ with jailer `mknod` nodes; a plain TouchPad keeps 1.1.0 and `tls-updates` was de
 finding that **nothing in the roll-up gates on board name** — on the 3.0.x line the version fence is
 the only fence. See the package bullet.
 
+**2026-09-14: two new packages, `org.webosarchive.media-tls13` 1.0.0 and `com.palm.app.videos` 3.2.0
+(both user-built, index-only additions, ipks as-delivered).** `media-tls13` swaps GStreamer's `souphttpsrc`
+for a libcurl element that `dlopen`s `/usr/lib/ssl11/libcurl.so.4`, so the audio/video players stream from
+modern HTTPS. It works on 3.0.x AND CE 3.1.0, so it uses **Atlas's two-stanza trick**: a dep-free
+`Min 3.1.0` stanza FIRST, then a `Min 3.0.5`/`Max 3.0.9` stanza with `Depends: org.webosinternals.browser-tls13`
+(the ssl11 libcurl provider on 3.0.x). It joined the TouchPad roll-up, which went **1.0.19 → 1.0.20**
+(unversioned new member; control re-cut, payload verbatim). `videos` is the CE video player, offered
+**only at `Min 3.1.0`/`Max 3.9.9`, `Depends: org.webosarchive.media-tls13` (index-only; resolves to the
+dep-free 3.1.0 stanza), titled "Videos (Experimental)"** with a bold experimental lead. Feed is now **71 packages / 94 stanzas**. Neither has been run from the feed through Preware yet;
+`media-tls13`'s postinst comment records a hardware finding from 2026-09-14 (registry cache), so it has at
+least run by hand. `videos` 3.2.0 was **re-cut twice at the same version the same day** (three builds; only
+the last is safe — see its bullet): the second's prerm deadlocked LunaSysMgr on removal via Preware, which
+settled a question this file had briefly got wrong — **a `control.tar.gz` prerm IS run inside LunaSysMgr**,
+because ipkgservice copies it to `.scripts/<pkg>/pmPreRemove.script` and the App Installer runs that copy
+synchronously on remove. The postinst is not promoted and runs in ipkgservice's own process.
+
 **Synergy Revival is DEPLOYED and hardware-verified.** ~~Branch `synergy-connectors` is NOT MERGED~~
 — **merged as of 2026-08-29**: `synergy-connectors` is now a fully-merged ancestor of `main`, and `main`
 is ahead of it (the connector re-cuts and the SIGBUS fix landed there). Build from `main`.
@@ -80,7 +96,8 @@ Four upstream installer bugs were found and fixed along the way — see "Four up
 bugs" below before touching any of these packages.
 34 new packages (Part 1 runtime + core-app updates, 20 pick-and-choose connectors, and our
 `org.webosarchive.synergy-revival 1.0.0` roll-up) take the feed to **69 packages / 90 stanzas**
-(**70 / 91** since btgamepad 1.2.0, the Go-only build, joined 1.1.0 in the feed on 2026-08-31). The same
+(**70 / 91** since btgamepad 1.2.0, the Go-only build, joined 1.1.0 in the feed on 2026-08-31; **71 / 94**
+since `media-tls13` (two stanzas) and `videos` on 2026-09-14). The same
 work retired `org.webosarchive.accountsapp` in favour of `com.palm.app.accounts` 3.1.1 and took
 `tls-updates` to **1.0.18**. Index checks all pass; **nothing has been run on hardware yet.** Read the
 "Synergy Revival" section before touching any of it.
@@ -367,8 +384,8 @@ floors) resolves.
   `c931…` (the bricked one). No hostnames set, so they're hard to tell apart — check health first
   (`hostname`, version, `ps | grep LunaSysMgr`, installed pkgs) before patching.
 
-## Package inventory (single feed = 70 packages / 91 stanzas — Atlas, btgamepad and each of the 20 Synergy
-connectors have two; phones detailed below)
+## Package inventory (single feed = 71 packages / 94 stanzas — Atlas, btgamepad, media-tls13 and each of the
+20 Synergy connectors have two; phones detailed below)
 
 - **nizovn stack** (hand-curated stanzas): cacert, glibc, openssl, qt5* (`qt5qpaplugins` **1.0.4**,
   qt5 5.9.7-0, **qt5sdk 1.0.3**), qtwebbrowser, `qupzilla` (**2.3.1**), squid (kept for old phones,
@@ -494,10 +511,12 @@ connectors have two; phones detailed below)
   `UrlManager.js` `helpUrl` (drives all content) + `HelpApp.js` palm.com domain check + device.do
   → `http://help.webosarchive.org`. Backs up `*.webosce-orig`, restores on removal, RestartLuna.
 - **`org.webosarchive.tls-updates`** (`" TLS 1.3 Updates (TouchPad)"` — ⚠️ deliberate leading
-  space, see the sorting note above; **1.0.19**) — **meta** package
+  space, see the sorting note above; **1.0.20**) — **meta** package
   (README-only payload; it gained a `postinst` in 1.0.18, see below)
   package. Depends: rootcerts, browser-tls13, ntpdate-sync, curl/luna/mail-tls13,
-  **downloadmgr-tls13 (>= 1.1.0)**, mojomail-imap-tagfix, help-redirect, enyo-findapps,
+  **downloadmgr-tls13 (>= 1.1.0)**, **`org.webosarchive.media-tls13`** (unversioned, **added in 1.0.20**,
+  placed right after downloadmgr — it needs browser-tls13's ssl11 libcurl, which is already ordered
+  earlier), mojomail-imap-tagfix, help-redirect, enyo-findapps,
   **usbsettings (>= 1.1.9)**, **btgamepad (>= 1.1.0)**, **`com.palm.app.accounts (>= 3.1.1)`**
   (**1.0.18** — replaced `org.webosarchive.accountsapp`, which was a member from 1.0.13 and is now
   retired; see the Synergy Revival section),
@@ -519,7 +538,8 @@ connectors have two; phones detailed below)
   Adding a plain (unversioned) new member is the same story minus the floor: **1.0.12→1.0.13**
   added `org.webosarchive.accountsapp` to Depends and still required the version bump + control
   rebuild, since Preware only offers an update when the Version string itself changes; **1.0.15→1.0.16**
-  moved the luna floor to `>= 1.1.4`; **1.0.14→1.0.15**
+  moved the luna floor to `>= 1.1.4`; **1.0.19→1.0.20** added `org.webosarchive.media-tls13` (unversioned) —
+  1.0.19 was confirmed live on the server by `curl` before the bump; **1.0.14→1.0.15**
   added `com.palm.app.backup` the same way — and 1.0.14 was *already on the server* (verified by
   `curl`-ing the live `Packages.gz` before touching anything, rather than assuming), so re-cutting it
   in place was never an option.
@@ -628,7 +648,10 @@ connectors have two; phones detailed below)
       Index-only, so it needed no version bump. **Remove it when 0.9.13 ships** — it is a note for this
       upgrade, not a permanent part of the description.
     - **Lesson worth generalising: never `luna-send -n 1` to a service LunaSysMgr itself provides from
-      a postinst/prerm** (`com.palm.applicationManager`, `com.palm.appinstaller` — both in its
+      a postinst/prerm** — and that INCLUDES a plain `control.tar.gz` prerm, because **ipkgservice promotes
+      it to `.scripts/<pkg>/pmPreRemove.script`** at install time (see the `com.palm.app.videos` bullet; a
+      wrong "control.tar.gz scripts are safe" qualifier stood here for a few hours on 2026-09-14 and cost two
+      hard reboots) (`com.palm.applicationManager`, `com.palm.appinstaller` — both in its
       `allowedNames` in `/usr/share/ls2/roles/prv/com.palm.luna.json`). Background it:
       `( luna-send … & ) >/dev/null 2>&1`. `com.palm.configurator` is a *separate* daemon and is safe
       to call blocking, which is why the two `configurator/run` calls in Atlas's postinst are fine.
@@ -1035,6 +1058,83 @@ not the name triple alone** — the check in this repo was updated accordingly.
     Note the incoming control's `Source.Changelog` still has **3.1.0** as its newest entry — the 3.1.1
     notes exist only in our curated index stanza.
 
+- **`org.webosarchive.media-tls13`** ("Media TLS 1.3 (HTTPS streaming)", **1.0.0**, armv7, 26KB, TouchPad
+  only, user-built, delivered in `fresh-ipks/`) — lets the audio/video players stream from modern HTTPS
+  (TLS 1.2/1.3 + SNI, incl. http→https redirects). Payload is one file, `files/libgstcurlhttpsrc.so`, a
+  GStreamer 0.10 source element registered under the **same name as the stock `souphttpsrc`** (media-pipeline
+  creates it by name), which `dlopen`s **`/usr/lib/ssl11/libcurl.so.4`** at runtime (`libdl` + the literal
+  `/usr/lib/ssl11` string; libcurl is NOT in its NEEDED list, so it does not depend on the launcher env that
+  luna-tls13's `media-pipeline` wrapper scrubs). postinst copies it to `/usr/lib/gstreamer-0.10/`, moves
+  the stock `libgstsouphttpsrc.so` aside as `.webosce-orig`, and **drops the GStreamer registry cache**
+  (`/var/home/*/.gstreamer-0.10/registry.*.bin` — GLib takes the home from passwd, not `$HOME`); the
+  comment records why: without the drop, the rescan reused the cached stock feature and then purged it,
+  leaving *no* souphttpsrc (seen on hardware 2026-09-14). Exits 0 as a no-op when the ssl11 libcurl is
+  absent. prerm restores the stock plugin. Ships a hidden (`visible:false`) app stub with `appinfo.json`,
+  which matters for the removal path (see the luna-send note under `videos`). No `Depends` in the control —
+  deliberately, same reason as Atlas.
+  - **Two index stanzas over one ipk — the Atlas trick, because it works on 3.0.x AND CE 3.1.0.** On
+    3.0.x the ssl11 libcurl comes from `org.webosinternals.browser-tls13` (`Max 3.0.9`, so unresolvable at
+    3.1.0); on CE 3.1.0 it is built in. So: **FIRST** `Min 3.1.0`/`Max 3.9.9`, no `Depends`; **SECOND**
+    `Min 3.0.5`/`Max 3.0.9`, `Depends: org.webosinternals.browser-tls13`. Same `Filename`+`MD5Sum`, so the
+    ipkg dedupe trap does not apply. `Min 3.0.5` (not the control's 3.0.0) to match browser-tls13 and
+    avoid the accountsapp-style dep gap. `DeviceCompatibility` lists all three TouchPad spellings
+    (`["TouchPad","TouchPad Go","Touchpad Go"]`, the btgamepad technique). Sweep asserts: dep is
+    browser-tls13 at 3.0.5, none at 3.1.0, in both pref states.
+  - **Member of the TouchPad `tls-updates` roll-up as of 1.0.20** (unversioned). Deliberately depends on
+    browser-tls13, not on the roll-up — the roll-up depends on *it*, so the other way round is a cycle.
+  - Icon `assets/icons/media-tls13.png` = the payload's 64×64 `icon.png` (identical bytes to the `videos`
+    icon — both ship the same clapperboard). Control's `Source` was taken as-is apart from the gates and
+    a per-stanza closing sentence.
+- **`com.palm.app.videos`** ("Videos (Experimental)", **3.2.0**, arch `all`, 148KB, user-built) — the webOS
+  CE video player as a post-flash install: an Enyo player app plus a postinst that (1) patches Photos'
+  `AlbumGridView.js` on cryptofs to hand videos to it (md5-guarded against the stock file, backed up
+  `.webosce-orig`, result md5-checked), (2) turns the ROM `com.palm.app.videoplayer` into the CE player
+  in place (index.html + appinfo.json backed up, our source/css added beside the Mojo files, 2MB
+  free-space guard), (3) installs a Tweaks definition, (4) registers itself as the active handler for
+  seven video MIME types via `com.palm.applicationManager`. prerm undoes all four. `RestartLuna` ×3.
+  Exits 0 always. **Gate (user's call): `Min 3.1.0`/`Max 3.9.9`, `Depends: org.webosarchive.media-tls13`
+  (index-only — the ipk control stays dep-free, same reason as Atlas — and it resolves to media-tls13's
+  dep-free 3.1.0 stanza in both pref states, so it never drags browser-tls13 onto CE), experimental** — a
+  bold "Experimental. Offered only on webOS CE 3.1.0" lead in `FullDescription` and "(Experimental)" in
+  the title. The control says `Min 3.0.0`; the index overrides it. Not in any roll-up.
+  - ⚠️ **The prerm deadlock — hardware-confirmed twice on 2026-09-14, and the mechanism is now exact.** The
+    first two builds' prerm made blocking `luna-send -n 1 palm://com.palm.applicationManager/…` calls
+    (listAllHandlersForMime / swapResourceHandler / mimeTypeForExtension) to hand the video MIME types back.
+    Removing the app through Preware froze the UI until a hard reboot, twice. Why, from
+    `~/Projects/preware/source/src/luna_methods.c`: **`do_install` (L1783-1822) copies the package's
+    `control.tar.gz` prerm to `/media/cryptofs/apps/.scripts/<pkg>/pmPreRemove.script`** (only when the ipk
+    did not ship one of its own); `do_remove` then, for any package with an `appinfo.json`, calls
+    `luna-send -n 3 luna://com.palm.appinstaller/remove` (L1946), and `com.palm.appinstaller` is
+    **LunaSysMgr**, which runs that stored script synchronously — the reply the script waits for can only
+    come from the process waiting for the script. So a plain ipkg-style prerm is NOT out of harm's way; the
+    "3-member ar, no pm*.script" reasoning that stood in this file for a few hours was wrong. (ipkgservice
+    also runs `.prerm` itself first, out of process, L1910 — the *second* run is the one that hangs.)
+    - **The postinst is different**, and the third build leaves its ~25 blocking calls alone on purpose:
+      L1828-1840 only *check* for an existing `pmPostInstall.script` and otherwise run `.postinst` from
+      ipkgservice's own process; nothing promotes it. Both Preware installs of build 2 went through.
+    - **Build 3's prerm** drops the handler-restore block entirely (the `RestartLuna` on removal rescans the
+      handlers without this app, so there is nothing to undo) and backgrounds the one remaining
+      `luna-send` (to `org.webosinternals.tweaks.prefs/scan`, a separate JS service, so it was never the
+      hang — backgrounded anyway). Its header comment documents the rule.
+    - ⚠️ **Sticky, like the Synergy deadlock:** a device that installed build 1 or 2 already holds the
+      broken prerm at `.scripts/com.palm.app.videos/pmPreRemove.script`, and Preware updates/removes by
+      running *that*. Repair before touching the package on such a device: overwrite that file with build
+      3's prerm (or delete the handler block from it) over novacom.
+  - Icon `assets/icons/videos.png` = the payload's 64×64 `icon.png` (a 256×256 splash icon is also in
+    the payload; not used).
+  - ⚠️ **3.2.0 was RE-CUT AT THE SAME VERSION TWICE on 2026-09-14 — there are three different `3.2.0`
+    ipks; only the third is safe.** User's call each time, on the grounds that nobody had downloaded the
+    earlier one (the same deliberate exception as `com.palm.app.backup` 3.1.1); a device that did install
+    an earlier build will never be offered the replacement and needs the prerm repair above.
+    - build 1 (md5 `29a29af0…`, 148,020B): live briefly with the media-tls13 push. Still had the player's
+      own "HTTPS streams refused" guard. **Do not resurrect.**
+    - build 2 (md5 `89bd5c68…`, 148,908B): payload fix — 3 files (`css/player.css`, `source/PlayerApp.js`,
+      `source/VideoEngine.js`: HTTPS guard removed, header spinner, retry-after-error, buffering-aware
+      clock); scripts identical to build 1, i.e. **the deadlocking prerm**. Live for ~2 hours. **Do not
+      resurrect.**
+    - build 3 (md5 `e3db23b5…`, 149,000B, **current**): payload byte-identical to build 2 (data.tar.gz
+      differs only in tar metadata), postinst identical, control differs only in `LastUpdated`; the whole
+      change is the prerm described above.
 - **`org.webosarchive.accountsapp`** — ⚠️ **RETIRED 2026-08-24, no longer in the feed.** Superseded by
   `com.palm.app.accounts` **3.1.1** (Synergy Revival Part 1), which is a *strict superset*: byte-identical
   files apart from `appinfo.json` version strings and `AccountManager.js`, plus 9 localization files.
@@ -1540,18 +1640,18 @@ dedupe trap. Note the qualifier: Atlas deliberately has two stanzas on one file,
 found `curl-tls13`'s and `mail-tls13`'s stale deps. The visibility check also verifies **version
 floors** resolve against what the feed actually ships, not just that the dep is visible.
 
-Current result — **91 stanzas** (70 packages; Atlas, `btgamepad` and each of the 20 Synergy connectors
-have two), all valid, with the sweep run at **both settings of the `ignoreDevices` pref** (added
+Current result — **94 stanzas** (71 packages; Atlas, `btgamepad`, `media-tls13` and each of the 20 Synergy
+connectors have two), all valid, with the sweep run at **both settings of the `ignoreDevices` pref** (added
 2026-08-23, since `Max`/`DeviceCompatibility` are soft and only `Min` survives that toggle). The
 `btgp` column was added 2026-08-31 and is the assertion for the Go-only release: **1.1.0 on a
 TouchPad, 1.2.0 on a Go, at the default pref**:
 
 ```
 ignoreDevices = OFF (default)
-TouchPad 3.0.5    63 visible  btgp 1.1.0  synergy 21  atlas deps: tls-updates  metas: tls-updates, synergy-revival  deps OK
-TouchPad CE 3.1.0 35 visible  btgp     -  synergy 20  atlas deps: (none)       metas: (none)                        deps OK
-Go 3.0.5 "TouchPad Go"  52 vis btgp 1.2.0                                      <- nizovn stack invisible, see below
-Go 3.0.5 "Touchpad Go"  63 vis btgp 1.2.0
+TouchPad 3.0.5    64 visible  btgp 1.1.0  synergy 21  atlas deps: tls-updates  metas: tls-updates, synergy-revival  deps OK  media deps: browser-tls13  videos -
+TouchPad CE 3.1.0 37 visible  btgp     -  synergy 20  atlas deps: (none)       metas: (none)                        deps OK  media deps: (none)         videos 3.2.0
+Go 3.0.5 "TouchPad Go"  53 vis btgp 1.2.0                                      <- nizovn stack invisible, see below
+Go 3.0.5 "Touchpad Go"  64 vis btgp 1.2.0
 Pre3 2.2.4        20 visible  btgp     -  synergy  0  atlas: not visible       metas: tls-updates-phone             deps OK
 Veer 2.2.4        11 visible  btgp     -  synergy  0  atlas: not visible       metas: tls-updates-phone             deps OK
 Pre2 2.2.4        11 visible  btgp     -  synergy  0  atlas: not visible       metas: tls-updates-phone             deps OK
@@ -1559,8 +1659,8 @@ Veer 2.2.0         3 visible  btgp     -  synergy  0  atlas: not visible       m
 Pre2 2.1.0         3 visible  btgp     -  synergy  0  atlas: not visible       metas: (none)                        deps OK
 
 ignoreDevices = ON
-TouchPad 3.0.5    69 visible  btgp 1.2.0  synergy 21  atlas deps: tls-updates                           deps OK  <- see btgamepad bullet
-TouchPad CE 3.1.0 69 visible  btgp 1.2.0  synergy 21  atlas deps: (none)                                deps OK  <- order works
+TouchPad 3.0.5    70 visible  btgp 1.2.0  synergy 21  atlas deps: tls-updates                           deps OK  <- see btgamepad bullet
+TouchPad CE 3.1.0 71 visible  btgp 1.2.0  synergy 21  atlas deps: (none)                                deps OK  <- order works; media deps (none), videos visible
 Pre2 2.1.0         5 visible  squid -> glibc/openssl not visible (PRE-EXISTING, Min-gated)
 ```
 
