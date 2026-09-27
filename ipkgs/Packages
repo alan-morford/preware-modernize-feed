@@ -239,16 +239,16 @@ Maintainer: N/A <nobody@example.com>
 Source: { "LastUpdated":"1782744397", "Type":"Application", "Feed":"WOSA Modernize", "Category":"Modernize", "Title":"HP App Catalog (webOS 2.x Phones)", "FullDescription":"Community updated HP App Catalog (findapps) client for webOS 2.x phones. Installable on webOS 2.2.4 and higher within the 2.x series.", "MinWebOSVersion":"2.2.4", "MaxWebOSVersion":"2.9.9", "Icon":"http://stacks.webosarchive.org/feeds/modernize/ipkgs/assets/icons/hp-appcatalog.png" }
 
 Package: com.palm.app.enyo-findapps
-Version: 6.0.2900
+Version: 6.2.2928
 Depends: 
 Section: misc
 Architecture: all
-MD5Sum: 805100ac66b6ff9cb183c6751ad52525
-Size: 14904938
-Filename: com.palm.app.enyo-findapps_6.0.2900_all.ipk
+MD5Sum: ca42cb60134dc44b38d77ec618595cdd
+Size: 1847234
+Filename: com.palm.app.enyo-findapps_6.2.2928_all.ipk
 Description: This is a webOS application.
 Maintainer: N/A <nobody@example.com>
-Source: { "LastUpdated":"1782744397", "Type":"Application", "Feed":"WOSA Modernize", "Category":"Modernize", "Title":"HP App Catalog (TouchPad)", "FullDescription":"Community updated Enyo-based HP App Catalog (enyo-findapps) for the webOS 3.0.x TouchPad.", "MinWebOSVersion":"3.0.0", "MaxWebOSVersion":"3.0.9", "Icon":"http://stacks.webosarchive.org/feeds/modernize/ipkgs/assets/icons/hp-appcatalog.png" }
+Source: {"LastUpdated":"1790529532", "Type":"Application", "Feed":"WOSA Modernize", "Category":"Modernize", "Title":"webOS App Catalog (TouchPad)", "FullDescription":"Community updated Enyo-based webOS App Catalog (enyo-findapps) for the TouchPad, on webOS 3.0.x and webOS CE 3.1.0.<br><br><b>New in 6.2:</b> installs work again. HP's install service checked every package against signing servers that have been gone since 2015, so every install failed. The catalog now installs packages itself, and hands any package with install scripts to Preware. The Pivot magazine now downloads its latest edition after install instead of shipping it inside the app, which makes the app about 13MB smaller. Google Analytics tracking and the failing carrier data-connection lookup are removed, and the catalog now offers its own updates.", "MinWebOSVersion":"3.0.0", "MaxWebOSVersion":"3.9.9", "Icon":"http://stacks.webosarchive.org/feeds/modernize/ipkgs/assets/icons/webos-appcatalog.png"}
 
 Package: org.webosinternals.preware
 Version: 1.9.18

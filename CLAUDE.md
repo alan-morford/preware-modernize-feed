@@ -507,6 +507,36 @@ floors) resolves.
 - **App Catalog:** `com.palm.app.findapps` (phones, Min 2.2.4/Max 2.9.9, icon hp-appcatalog),
   `com.palm.app.enyo-findapps` (TouchPad, Min 3.0.0). These were stock Palm-packaged ipks with no
   `Source` — we injected one.
+  - **`enyo-findapps` 6.0.2900 → 6.2.2928 (2026-09-27)**, user-built, ipk kept as-delivered (bare
+    palm-packager control, no `Source`, **no install scripts**). 14.9MB → 1.8MB: the 31-page bundled Pivot
+    magazine edition, `main/mock` and `main/lib/analytics` are gone (the magazine is now downloaded after
+    install into `/media/internal/.pivot`). The main change is **installs work again**: HP's
+    `appInstallService` fails every package with `FAILED_VERIFY` (the signing servers are dead), so on webOS the app
+    now installs script-free packages through `com.palm.appinstaller/installNoVerify` and hands anything
+    with scripts to the `.ipk` handler (Preware). These are runtime calls from the app, not install-script
+    calls, so the LunaSysMgr deadlock does not apply to them. It also removes Google Analytics and the carrier data-connection lookup, and
+    adds a self-update check against `appcatalog.webosarchive.org/appcatalog-touchpad.json`. The app folder
+    still ships `README.md` and a 275KB `app-catalog.psd`: harmless, and left as delivered.
+    `tls-updates` depends on it **unversioned** and was deliberately not bumped. Existing users are offered
+    6.2 as an ordinary update, and new roll-up installs get the new file.
+    - ⚠️ **Its `Max` was widened 3.0.9 → 3.9.9 the same day, index-only, no version bump**, after a CE
+      3.1.0 TouchPad running 6.1.2923 (installed from outside this feed) was **not offered 6.2**: the
+      inherited `Max 3.0.9` dropped the feed stanza in `loadPackage`, while the installed entry (no
+      `Source`) stayed visible, so Preware had nothing to compare against. This build is aimed at CE (its
+      install path was measured on a CE 3.1.0 TouchPad and has a Lunacy branch), so the old gate hid it
+      from its main target. **Lesson:** when a new build arrives, re-check the gate you're inheriting, not
+      just the version, md5 and size.
+    - **Renamed + new icon (2026-09-27, index-only):** Title `"HP App Catalog (TouchPad)"` →
+      **`"webOS App Catalog (TouchPad)"`** (dropping "HP", since HP abandoned webOS), and icon →
+      `assets/icons/webos-appcatalog.png` (the 64×64 `icon.png` from the 6.2 payload). `hp-appcatalog.png`
+      is **kept**, because the phone `com.palm.app.findapps` listing still uses it and is still titled
+      `"HP App Catalog (webOS 2.x Phones)"`.
+    - ⚠️ **6.2.2928 was RE-CUT AT THE SAME VERSION (2026-09-27, user's call: nobody had downloaded it).**
+      The first build (md5 `86fde590…`, 1,847,228B) had `API_BASE` (`archive-patch.js`) and
+      `PIVOT_BASE_URL` (`pivot-hydration.js`) on **https**, which a stock device's TLS 1.0 stack can't
+      reach. Those are the only two lines that differ in the current build (md5 `ca42cb60…`, 1,847,234B),
+      now back on **http**. Control identical. **Do not resurrect the first build.** When a new catalog
+      build arrives, grep it for `https://…webosarchive`.
 - **`org.webosarchive.help-redirect`** (built + verified this session): patches `com.palm.app.help`
   `UrlManager.js` `helpUrl` (drives all content) + `HelpApp.js` palm.com domain check + device.do
   → `http://help.webosarchive.org`. Backs up `*.webosce-orig`, restores on removal, RestartLuna.
@@ -1649,7 +1679,7 @@ TouchPad, 1.2.0 on a Go, at the default pref**:
 ```
 ignoreDevices = OFF (default)
 TouchPad 3.0.5    64 visible  btgp 1.1.0  synergy 21  atlas deps: tls-updates  metas: tls-updates, synergy-revival  deps OK  media deps: browser-tls13  videos -
-TouchPad CE 3.1.0 37 visible  btgp     -  synergy 20  atlas deps: (none)       metas: (none)                        deps OK  media deps: (none)         videos 3.2.0
+TouchPad CE 3.1.0 38 visible  btgp     -  synergy 20  atlas deps: (none)       metas: (none)                        deps OK  media deps: (none)         videos 3.2.0
 Go 3.0.5 "TouchPad Go"  53 vis btgp 1.2.0                                      <- nizovn stack invisible, see below
 Go 3.0.5 "Touchpad Go"  64 vis btgp 1.2.0
 Pre3 2.2.4        20 visible  btgp     -  synergy  0  atlas: not visible       metas: tls-updates-phone             deps OK
