@@ -227,40 +227,52 @@ Maintainer: WebOS Internals <support@webos-internals.org>
 Source: { "LastUpdated":"1782744397", "Type":"Application", "Feed":"WOSA Modernize", "Category":"Modernize", "Title":"Mojomail IMAP Tag Fix (TouchPad)", "FullDescription":"<b>webOS 3.0.5 or higher (TouchPad) only -- do NOT install on a webOS 2.x phone (Pre3 / Pre2 / Veer).</b> This build patches TouchPad (webOS 3.0.5) binaries and will break a phone. Phone builds of this package are made per device and are packaged separately.<br><br>Optional, standalone one-byte patch of /usr/bin/mojomail-imap: changes its hard-coded IMAP command tag prefix from ~A to AA. mojomail tags IMAP commands ~A1, ~A2, ...; some strict modern servers (e.g. Fastmail) reject a tilde in the tag with an untagged BAD response, which the stock client can never match to its request, so IMAP account validation hangs and fails (error 3099). AA1.. is accepted by every server. Independent of the TLS packages -- take it or leave it. md5-guarded to the stock webOS 3.0.5 binary, backed up to /var/luna, restored on removal. Useful together with org.webosinternals.mail-tls13 (which provides modern TLS for the mail transports).", "License":"Public Domain", "MinWebOSVersion":"3.0.5", "MaxWebOSVersion":"3.0.9", "Icon":"http://stacks.webosarchive.org/feeds/modernize/ipkgs/assets/icons/mail.png" }
 
 Package: com.palm.app.findapps
-Version: 3.0.23300
+Version: 3.1.23302
 Depends: 
 Section: misc
 Architecture: all
-MD5Sum: 8f58ddae42d33c7232a80b4f6fe7f969
-Size: 2580022
-Filename: com.palm.app.findapps_3.0.23300_all.ipk
+MD5Sum: d4be067fd895b7f9a807784ca79ad223
+Size: 2607658
+Filename: com.palm.app.findapps_3.1.23302_all.ipk
 Description: This is a webOS application.
 Maintainer: N/A <nobody@example.com>
-Source: { "LastUpdated":"1782744397", "Type":"Application", "Feed":"WOSA Modernize", "Category":"Modernize", "Title":"HP App Catalog (webOS 2.x Phones)", "FullDescription":"Community updated HP App Catalog (findapps) client for webOS 2.x phones. Installable on webOS 2.2.4 and higher within the 2.x series.", "MinWebOSVersion":"2.2.4", "MaxWebOSVersion":"2.9.9", "Icon":"http://stacks.webosarchive.org/feeds/modernize/ipkgs/assets/icons/hp-appcatalog.png" }
+Source: {"LastUpdated":"1790535560", "Type":"Application", "Feed":"WOSA Modernize", "Category":"Modernize", "Title":"webOS App Catalog (Phones)", "FullDescription":"Community updated webOS App Catalog (findapps) client for webOS 2.x phones. Installable on webOS 2.2.4 and higher within the 2.x series.<br><br><b>New in 3.1:</b> installs go to whichever app handles .ipk files (Preware or Preware 2), and if none will take the package, the catalog opens the app's page in Preware instead. A request the network drops now times out and retries instead of hanging. \"Find More\" from Just Type, Exhibition and Accounts now works. Google Analytics tracking is switched off.", "MinWebOSVersion":"2.2.4", "MaxWebOSVersion":"2.9.9", "Icon":"http://stacks.webosarchive.org/feeds/modernize/ipkgs/assets/icons/webos-appcatalog-phone.png"}
 
 Package: com.palm.app.enyo-findapps
-Version: 6.2.2928
+Version: 6.2.2929
 Depends: 
 Section: misc
 Architecture: all
-MD5Sum: ca42cb60134dc44b38d77ec618595cdd
-Size: 1847234
-Filename: com.palm.app.enyo-findapps_6.2.2928_all.ipk
+MD5Sum: 5e4e084cc6adfbd131c319c9ee53097e
+Size: 1847706
+Filename: com.palm.app.enyo-findapps_6.2.2929_all.ipk
 Description: This is a webOS application.
 Maintainer: N/A <nobody@example.com>
-Source: {"LastUpdated":"1790529532", "Type":"Application", "Feed":"WOSA Modernize", "Category":"Modernize", "Title":"webOS App Catalog (TouchPad)", "FullDescription":"Community updated Enyo-based webOS App Catalog (enyo-findapps) for the TouchPad, on webOS 3.0.x and webOS CE 3.1.0.<br><br><b>New in 6.2:</b> installs work again. HP's install service checked every package against signing servers that have been gone since 2015, so every install failed. The catalog now installs packages itself, and hands any package with install scripts to Preware. The Pivot magazine now downloads its latest edition after install instead of shipping it inside the app, which makes the app about 13MB smaller. Google Analytics tracking and the failing carrier data-connection lookup are removed, and the catalog now offers its own updates.", "MinWebOSVersion":"3.0.0", "MaxWebOSVersion":"3.9.9", "Icon":"http://stacks.webosarchive.org/feeds/modernize/ipkgs/assets/icons/webos-appcatalog.png"}
+Source: {"LastUpdated":"1790536461", "Type":"Application", "Feed":"WOSA Modernize", "Category":"Modernize", "Title":"webOS App Catalog (TouchPad)", "FullDescription":"Community updated Enyo-based webOS App Catalog (enyo-findapps) for the TouchPad, on webOS 3.0.x and webOS CE 3.1.0.<br><br><b>New in 6.2:</b> installs work again. HP's install service checked every package against signing servers that have been gone since 2015, so every install failed. The catalog now installs packages itself, and hands any package with install scripts to Preware. The Pivot magazine now downloads its latest edition after install instead of shipping it inside the app, which makes the app about 13MB smaller. Google Analytics tracking and the failing carrier data-connection lookup are removed, and the catalog now offers its own updates.", "MinWebOSVersion":"3.0.0", "MaxWebOSVersion":"3.9.9", "Icon":"http://stacks.webosarchive.org/feeds/modernize/ipkgs/assets/icons/webos-appcatalog.png"}
 
 Package: org.webosinternals.preware
-Version: 1.9.18
+Version: 1.9.20
 Depends: 
 Section: System Utilities
 Architecture: all
-MD5Sum: 154036178ac730ecbc25eac2271243d0
-Size: 384602
-Filename: org.webosinternals.preware_1.9.18_arm.ipk
+MD5Sum: 8ee5f4e376240c442abf5c76e7702b77
+Size: 397650
+Filename: org.webosinternals.preware_1.9.20_arm.ipk
 Description: Preware homebrew package manager
 Maintainer: webOS Archive
-Source: { "LastUpdated":"1786909743", "Type":"Application", "Feed":"WOSA Modernize", "Category":"Modernize", "Title":"Preware", "FullDescription":"Preware, the webOS homebrew package manager (1.9.18). This build adds and enables the webOS Archive Modernize feed (TLS 1.2/1.3, root certificates, QupZilla, webOS CE) in the default feed set.", "PostInstallFlags":"RestartLuna", "PostUpdateFlags":"RestartLuna", "Icon":"http://stacks.webosarchive.org/feeds/modernize/ipkgs/assets/icons/preware-icon.png" }
+Source: {"LastUpdated":"1790540980", "Type":"Application", "Feed":"WOSA Modernize", "Category":"Modernize", "Title":"Preware", "FullDescription":"Preware, the webOS homebrew package manager (1.9.20). This build adds and enables the webOS Archive Modernize feed (TLS 1.2/1.3, root certificates, QupZilla, webOS CE) in the default feed set.<br><br><b>New since 1.9.18:</b> reads the OS version correctly on webOS CE 3.1.0, and turns the per-version patch and kernel feeds off there, since nothing is published for 3.1 (earlier builds added them with a broken address that failed on every Update Feeds). The package service no longer stops itself after a startup conflict, which could leave it parked on webOS CE. Uninstalling Preware now keeps the package service when Preware 2 is still installed. The App Museum feed is no longer offered, and is removed from Manage Feeds.", "PostInstallFlags":"RestartLuna", "PostUpdateFlags":"RestartLuna", "Icon":"http://stacks.webosarchive.org/feeds/modernize/ipkgs/assets/icons/preware-icon.png"}
+
+Package: com.palm.app.preware2
+Version: 2.1.1
+Depends: 
+Section: System Utilities
+Architecture: all
+MD5Sum: e6b5ae1f2fd2f1ac7568c7f669a6c0f0
+Size: 533562
+Filename: com.palm.app.preware2_2.1.1_arm.ipk
+Description: Preware 2 homebrew package manager (alternate, in development)
+Maintainer: WebOS Ports
+Source: {"LastUpdated":"1790540980", "Type":"Application", "Feed":"WOSA Modernize", "Category":"Modernize", "Title":"Preware 2", "FullDescription":"An alternate version of Preware, the webOS homebrew package manager, currently in development by WebOS Ports. It installs alongside the original Preware and uses the same package service and feeds, including the webOS Archive Modernize feed.<br><br><b>Requires the Enyo library.</b> Compatible with webOS 2 and up.", "MinWebOSVersion":"2.0.0", "MaxWebOSVersion":"3.9.9", "PostInstallFlags":"RestartLuna", "PostUpdateFlags":"RestartLuna", "Icon":"http://stacks.webosarchive.org/feeds/modernize/ipkgs/assets/icons/preware2-icon.png"}
 
 Package: org.webosarchive.help-redirect
 Version: 1.0.0

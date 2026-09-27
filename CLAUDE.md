@@ -150,8 +150,9 @@ earlier "leave the depends tree alone" stance for this chain (index-only edit; i
   the Pre 3. Worth capturing while a phone is attached:
   `cat /etc/prefs/properties/machineName` per device, so the board-detection values are recorded
   rather than inferred (only `roadrunner` has independent corroboration, from Preware's own source).
-- **`~/Projects/preware`** (Preware 1.9.17 source: version bump, http modernize feed, injected
-  control.tar.gz postinst) is still **uncommitted** by the user's instruction — commit/push when ready.
+- **`~/Projects/preware`** (`webOSArchive/preware`): HEAD `a9db1bf` is unpushed, and the 1.9.20 changes
+  (version, postinst App Museum removal, prerm, changelog) are **uncommitted**. The feed's 1.9.20 is built
+  from that tree (see "Preware 1").
 - **`~/Projects/webos-docs`** (the user-facing MkDocs site, `github.com/webosarchive/webos-docs`) —
   11 files **uncommitted**: the two-path tablet-vs-phone layout was collapsed into one path now that
   phones have native TLS (see "User-facing docs" below). Commit/push when ready.
@@ -384,7 +385,7 @@ floors) resolves.
   `c931…` (the bricked one). No hostnames set, so they're hard to tell apart — check health first
   (`hostname`, version, `ps | grep LunaSysMgr`, installed pkgs) before patching.
 
-## Package inventory (single feed = 71 packages / 94 stanzas — Atlas, btgamepad, media-tls13 and each of the
+## Package inventory (single feed = 72 packages / 95 stanzas — Atlas, btgamepad, media-tls13 and each of the
 20 Synergy connectors have two; phones detailed below)
 
 - **nizovn stack** (hand-curated stanzas): cacert, glibc, openssl, qt5* (`qt5qpaplugins` **1.0.4**,
@@ -504,7 +505,7 @@ floors) resolves.
     - **`downloadmgr-tls13-phone` stays at 1.0.0 and that is correct** — per the user, the
       `curl_multi_remove_handle` crash **does not occur on the phones**, so there is nothing for a
       `phone` rebuild to fix and `tls-updates-phone` needs no floor. 1.1.0 is a topaz-only release.
-- **App Catalog:** `com.palm.app.findapps` (phones, Min 2.2.4/Max 2.9.9, icon hp-appcatalog),
+- **App Catalog:** `com.palm.app.findapps` (phones, Min 2.2.4/Max 2.9.9, icon webos-appcatalog-phone),
   `com.palm.app.enyo-findapps` (TouchPad, Min 3.0.0). These were stock Palm-packaged ipks with no
   `Source` — we injected one.
   - **`enyo-findapps` 6.0.2900 → 6.2.2928 (2026-09-27)**, user-built, ipk kept as-delivered (bare
@@ -528,15 +529,90 @@ floors) resolves.
       just the version, md5 and size.
     - **Renamed + new icon (2026-09-27, index-only):** Title `"HP App Catalog (TouchPad)"` →
       **`"webOS App Catalog (TouchPad)"`** (dropping "HP", since HP abandoned webOS), and icon →
-      `assets/icons/webos-appcatalog.png` (the 64×64 `icon.png` from the 6.2 payload). `hp-appcatalog.png`
-      is **kept**, because the phone `com.palm.app.findapps` listing still uses it and is still titled
-      `"HP App Catalog (webOS 2.x Phones)"`.
+      `assets/icons/webos-appcatalog.png` (the 64×64 `icon.png` from the 6.2 payload). The phone
+      listing got the same treatment later that day (below), so `hp-appcatalog.png` is now **unused** by
+      any stanza. It is left on the server, since deleting it gains nothing.
     - ⚠️ **6.2.2928 was RE-CUT AT THE SAME VERSION (2026-09-27, user's call: nobody had downloaded it).**
       The first build (md5 `86fde590…`, 1,847,228B) had `API_BASE` (`archive-patch.js`) and
       `PIVOT_BASE_URL` (`pivot-hydration.js`) on **https**, which a stock device's TLS 1.0 stack can't
       reach. Those are the only two lines that differ in the current build (md5 `ca42cb60…`, 1,847,234B),
       now back on **http**. Control identical. **Do not resurrect the first build.** When a new catalog
       build arrives, grep it for `https://…webosarchive`.
+    - **6.2.2928 → 6.2.2929 (2026-09-27): restores the install count.** 6.2 had stopped calling
+      `countAppDownload.php`. 2929 adds `countDownload()` to `archive-install.js`
+      (`source=webos-appcatalog-enyo`, device **nduid** as `&device=`, package id preferred over the numeric
+      catalog id, same as the phone 3.1 build). It fires at each point a package URL goes to an installer
+      (direct install, Lunacy's install service, the `.ipk` handler), with a 30s per-app guard so a
+      direct-install → Preware fallback counts once. `archive-patch.js` gains one line,
+      `window.archiveApiBase = API_BASE`. Everything else is version strings. A real version bump
+      this time, since 2928 was already pushed. Index `Source` kept, only `LastUpdated` refreshed.
+  - **`findapps` (phones) 3.0.23300 → 3.1.23302 (2026-09-27)**, user-built, ipk kept as-delivered (bare
+    control, no install scripts, 770 files either side; only two **empty** dirs, `platforms/{castle,pixie}`,
+    went away). Everything real is in `archive-patch.js`: installs go to the active `.ipk` handler, then its
+    alternates, then Preware by id (the same approach as the tablet 6.2), and fall back to Preware's
+    `{type:"view", id}` page. Adds a 15s request timeout (Prototype's Ajax has none), a `getMuseumMaster.php?provides=`
+    branch for "Find More" from Just Type/Exhibition/Accounts, and swaps `AppMetrics` for an inert stub
+    (`ga.js` stays in the bundle but never runs). All app URLs are **http** (checked). Title
+    `"HP App Catalog (webOS 2.x Phones)"` → **`"webOS App Catalog (Phones)"`**, matching the feed's
+    `(Phones)` suffix, and icon → `assets/icons/webos-appcatalog-phone.png` (the payload's 96×96 `icon.png`).
+    - ⚠️ **3.1.23302 was RE-CUT TWICE AT THE SAME VERSION before it was pushed (2026-09-27, user's call).**
+      Build 1 (md5 `355b6c76…`, 2,607,042B) had a self-update prompt whose "Update Now" did nothing:
+      `showUpdatePrompt()` passed `onChoice` to `showAlertDialog`, but Mojo reads only `model.onChoose`
+      (`webos-sdk-redux/…/mojo/506/javascripts/widget_alert.js:103`). It had also dropped the
+      `countAppDownload.php` install count. Build 2 (`145362cf…`) restored the count but still had
+      `onChoice`. **Build 3 (`d4be067f…`, 2,607,658B, current)** differs from build 2 by that one key only.
+      Control identical across all three apart from `Installed-Size`. **Do not resurrect builds 1 or 2.**
+      Worth grepping any future Mojo build for `onChoice`.
+    - The restored count differs from 3.0's: it sends the device **nduid** (`&device=`), and prefers the
+      **package id** over the numeric catalog id that 3.0 sent. Both were flagged to the user; build 3
+      shipped with them unchanged.
+- **`com.palm.app.preware2`** ("Preware 2", **2.1.1**, arch `all` despite the `_arm` filename, 533KB,
+  added 2026-09-27) — WebOS Ports' alternate, in-development Preware (Enyo 2.5, bundled as `build/enyo.js`).
+  Bare control, no `Source`. **2.1.0 went live as delivered; 2.1.1 is OUR build** (`e6b5ae1f…`, 533,562B),
+  made the same day: App Museum feed **removed** (not written, and an existing one deleted with its list),
+  and the package service updated to `32611fac…` to match Preware 1.9.20 (see "Preware 1").
+  - **Source:** Alan Morford's unmerged **PR #54** on `webOS-ports/preware`
+    (`luneos/preware2-legacy-webos`). The clone is `~/Projects/webos-ports-preware`. Its `origin` is the
+    user's fork **`codepoet80/preware2`**, whose default branch `webOS-ports/webOS-OSE` was
+    force-reset to PR #54's head `c80b07b` plus our two commits. `webos-ports` is the upstream remote.
+    **The user wants no feature branches there:** work on the default branch. PRs go to
+    **webOS-ports/preware**, never to Alan's fork: he is downstream of WebOS Ports, and a PR to his branch
+    was opened by mistake and closed. Ours is **webOS-ports/preware#55**, **stacked on #54**. The changed
+    files only exist in #54, so #55 lists #54's 26 commits plus our 2 and asks to be merged after it. It
+    shrinks to our 2 commits once #54 lands.
+    Our commits: `43dd0d5` removes the feed from `legacy/pmPostInstall.script` and
+    `source/model/luneosFeeds.js` (a list kept in step with that script); `8ce084f` replaces
+    `build-legacy.sh`'s `sed -i -e`, which on macOS also shipped a stray `upstart/preware2-service-check-e`.
+  - **The shipped 2.1.1 is built from `fe35a45`, NOT PR #54's head.** `fe35a45` rebuilt byte-for-byte
+    to the delivered 2.1.0 (apart from that stray file), so it is the exact source the user reviewed.
+    The three later commits on PR #54 (UI: app menu, search column, list counts) are not in our build.
+    Recipe: detached worktree at `fe35a45`, cherry-pick our commits (App Museum removal x2, build-legacy.sh
+    sed fix, the `legacy/bin` service binary), set `appinfo.json` to `2.1.1`, `bash build-legacy.sh`. Diff vs 2.1.0: control/appinfo/packageinfo versions, the 4 App Museum lines
+    in `pmPostInstall.script`, and one feed entry inside `build/app.js`. Nothing else.
+  - **Why 2.1.1 and not our usual `.N`:** `palm-package` rejects a 4-part appinfo version
+    ("must be of the form: major#.minor#.revision#"). So the build claims WebOS Ports' next number, and
+    the PR has to say so: their next release should be 2.1.2+ (or take 2.1.1 with this fix in it).
+  - 2.1.1 **deletes** any `wosa-appmuseum.conf{,.disabled,.new}` and `lists/appmuseum` on install, so it also
+    cleans up devices that installed 2.1.0 (which wrote the feed enabled). Sandbox-checked from all 3 states.
+    PR #55 carries 5 commits: removal, sed fix, service binary, delete-existing, upstart version parse.
+  - Index: `Min 2.0.0` / `Max 3.9.9`, no
+  `DeviceCompatibility`, no `Depends`, `RestartLuna` like Preware 1, icon `preware2-icon.png` (the payload's
+  512×512 scaled to 64). **Nothing may depend on it** (user's call), and we don't carry its whole dependency
+  chain, so its description just says "Requires the Enyo library". Not in either roll-up.
+  - **Why it is safe alongside Preware 1.9.20:** it ships the **same `org.webosinternals.ipkgservice`**. The
+    binary, upstart job and dbus/ls2 files are byte-identical to 1.9.20's (binary md5 `32611fac…`).
+    Its `pmPostInstall.script` runs `bin/install-service.sh`, which only reinstalls the service (after
+    `stop` + `killall -9`) if a file is **missing or differs**, and a `preware2-service-check` upstart
+    job re-runs that at **every boot**. With identical files that is a no-op, so installing it from
+    Preware never kills the service mid-install.
+  - ⚠️ **The trap for later:** if Preware 1 ever ships a *different* ipkgservice, Preware 2's boot job will
+    silently put its own copy back at every boot, and installing or updating Preware 2 from Preware will
+    `killall -9` the very service running the install. Keep the two binaries identical, or ask WebOS Ports
+    to make the check version-aware.
+  - Scripts checked: no `luna-send`, `killall LunaSysMgr` or reboot in either `pm*.script`, so they are safe
+    to run inside LunaSysMgr. The postinst rewrites the default feed `.conf`s the same way Preware 1 does
+    (and includes `modernize.conf`); prerm removes the service only when neither
+    `org.webosinternals.preware` nor `-alpha` is installed.
 - **`org.webosarchive.help-redirect`** (built + verified this session): patches `com.palm.app.help`
   `UrlManager.js` `helpUrl` (drives all content) + `HelpApp.js` palm.com domain check + device.do
   → `http://help.webosarchive.org`. Backs up `*.webosce-orig`, restores on removal, RestartLuna.
@@ -1806,17 +1882,91 @@ empty → "Unrecognized carrier" → the check aborts before any network. So the
 necessary-but-insufficient; the real fix is a binary patch of UpdateDaemon (force domain, skip
 carrier/roaming gating). Codepoet80 (the user) maintains the `webos-update-exploration` repo.
 
-## Preware self-bootstrap (separate repo `~/Projects/preware`, NOT yet committed/pushed)
+## Preware 1 (separate repo `~/Projects/preware` = `webOSArchive/preware`)
 
-We bumped Preware 1.9.16→**1.9.17**, added the modernize feed (http) to its default feeds, and
-**injected `./postinst`/`./prerm` into `control.tar.gz`** (palm-package only emits the Palm-installer
-`pmPostInstall.script`; ipkg/feed installs need control.tar.gz/postinst, else the feed setup never
-runs). Build keyless via `./build.sh arm` (signing keys absent + unreproducible; fine for
-ipkg/WOSQI installs which don't check the Palm signature). The Preware 1.9.17 ipk is in this feed.
-On a fresh Doctor: enable Dev Mode → WOSQI-install Preware 1.9.17 → its postinst writes
-`modernize.conf` → Update Feeds → patches appear. **Verify** `/media/cryptofs/apps/etc/ipkg/
-modernize.conf` exists after install (the one spot that depends on the install hook running).
-The `~/Projects/preware` source edits are still uncommitted per the user's instruction.
+The feed ships **Preware 1.9.20** (`8ee5f4e3…`, 397,650B, 2026-09-27), replacing 1.9.18. **Why 1.9.20 and
+not 1.9.19:** webOS CE 3.1.0 (build 86, BUILDMARK 600070) already **preloads Preware 1.9.19** from
+`/usr/palm/ipkgs/org.webosinternals.preware/` (md5 `9a33ade0…`, the user's Aug 29 hand-build, **new**
+service `32611fac…`). The "1.9.18" file distributed on the web was also found to contain that 1.9.19;
+the user is correcting it. On a fresh Doctor: enable Dev Mode → WOSQI-install Preware → its postinst
+writes `modernize.conf` → Update Feeds.
+
+**What 1.9.20 carries (vs the preloaded CE 1.9.19: only the last two bullets and the version):**
+- `257d0c2` CE fix: the OS version is parsed correctly on "webOS CE 3.1.0", and the per-version
+  webos-patches/kernels feeds are written **disabled** on 3.1+ or an unknown version, removing an enabled
+  one on upgrade. 1.9.18 turned them on everywhere, with a raw `PRODUCT_VERSION_STRING=webOS CE 3.1.0` as
+  the URL on CE. Sandbox-checked on 3.0.5 / 2.2.4 / CE 3.1.0.
+- `a9db1bf` package service (`32611fac…`): exits non-zero and sleeps when it can't take its bus name,
+  instead of an exit-0 respawn storm that parks the job on CE.
+- **App Museum feed REMOVED** (user's call): the postinst no longer writes it and **deletes** any
+  `wosa-appmuseum.conf{,.disabled,.new}`. Its list goes too, via the existing `rm -f lists/*`. Also a new
+  1.9.20 changelog entry in `startup-assistant.js`.
+- **prerm** keeps the shared service if `…-alpha` **or `com.palm.app.preware2`** is installed, checking
+  only the *other* apps (its own appinfo is still present while it runs). It used to ignore Preware 2,
+  which then had no backend until its boot check reinstalled the service on the next reboot.
+  Sandbox-checked, all 4 combos.
+- **The service's upstart job** (`source/upstart/…`, shared byte-for-byte with Preware 2's `legacy/upstart/`)
+  rewrites the version in any patches/kernels/alpha/beta feed file at **every boot**. It used the old
+  `.* webOS \([0-9.]*\)` pattern, so on CE it put the broken URL back after the postinst had fixed it (seen
+  on the as-shipped CE tablet: files off, URL broken). It now uses the postinst's parsing plus the `unknown`
+  guard, and repairs an already-broken URL at the next boot. Sandbox-checked on 3.0.5 / 2.2.4 / CE / garbage.
+  Caveat: Preware 2's `install-service.sh` reinstalls the job only when the *binary* differs or a file is
+  missing, so a CE device that installs Preware 2 **without** updating the preloaded 1.9.19 keeps the old
+  job until Preware 1 is updated. Harmless, since it only affects the URL of feeds that are off.
+- ⚠️ At build time `appinfo.json` (1.9.20), `control/postinst`, `control/prerm`, `upstart/…` and
+  `startup-assistant.js` were **uncommitted** in the repo, and `a9db1bf` was unpushed.
+
+⚠️ **`org.webosinternals.ipkgservice` must be byte-identical in Preware 1 and Preware 2 — now
+`32611fac…` in both** (user's call, 2026-09-27, made after CE turned out to ship it). Preware 2's
+`install-service.sh` replaces a differing service (after `stop` + `killall -9`) on install **and at every
+boot** via `preware2-service-check`. This was **observed** on a CE TouchPad: the hand-built 1.9.19's new
+binary had been silently replaced by Preware 2 2.1.0's old one. Nothing visibly broke; the fix was
+undone. Moving everything forward to `32611fac…` means no device ever goes backwards: CE stays put,
+3.0.5 moves once on update. Devices on the briefly-live Preware 2 **2.1.0** keep forcing the old binary at
+boot until they take 2.1.1. **Don't change the binary again without changing both apps in the same release.**
+The upstart job and dbus/ls2 files are already identical between the two.
+
+**✅ HARDWARE-VERIFIED from the live (unannounced) feed, 2026-09-27**, with 1.9.20 `8ee5f4e3…` and
+Preware 2 2.1.1 `e6b5ae1f…`, checked by novacom at every stage:
+- **CE 3.1.0 TouchPad** (as-shipped BUILDMARK 600070): preloaded 1.9.19 → 1.9.20 → reboot → + Preware 2. The
+  service stayed `32611fac…` throughout. The App Museum `.disabled` was deleted. Patches/kernels stayed off and
+  their broken `PRODUCT_VERSION_STRING=…` URLs became `…/3.1.0`, still correct after the reboot (so the new
+  upstart job works). Preware 2's install left the service process untouched.
+- **HP webOS 3.0.5 TouchPad** (genuine 1.9.18): → 1.9.20 → + Preware 2 → − Preware 2 → + Preware 2 → **−
+  Preware 1**. The service moved once, forward, to `32611fac…`. On that restart the new binary exited 1 after
+  ~5s (bus name still held by the old instance) and a single respawn took the name: `a9db1bf`'s paced retry
+  handling the exact race it was built for. Patches/kernels stayed on at `3.0.5`. Removing Preware 2 deleted only
+  its boot check. **Removing Preware 1 kept the service** (same process, files and ls2 roles intact) and it
+  answered `getMachineName`/`getConfigs` immediately, with no reboot. That verifies the prerm fix.
+
+**FUTURE (edited in source 2026-09-27, NOT in any shipped build): `Type=static` in the service's dbus file**
+(`source/dbus/…service` here and `legacy/dbus/…service` in `~/Projects/webos-ports-preware`, both
+**uncommitted**, and **not pushed** to PR #55, which matches the shipped 2.1.1). **The problem it fixes:**
+if something calls the service while the upstart job is down, the hub starts a second copy from `Exec=`.
+The upstart instance then can't take the bus name and retries every ~5s (`a9db1bf`'s paced exit 1),
+**forever**, since a hub-started copy never exits. Seen on the CE tablet after the boot-time reinstall of the
+ROM's 1.9.19 left the job down for ~2 minutes. **`Type=static`** is webOS's own marker for upstart-owned
+services (45 stock ones use it: activitymanager, audiod, browserserver, bluetooth…). **Hardware-tested:**
+with the job stopped the hub did NOT launch a copy (the query got no answer), and with the job started
+there was one instance, no respawns. Two things to settle before shipping it:
+1. **Preware 2's `install-service.sh` only reinstalls when the *binary* differs or a file is missing**, so a
+   `.service`-only change never reaches devices that already have Preware 2. Either ship it alongside a
+   binary change, or make `install-service.sh` also `cmp` the `.service` file (and then check that doesn't
+   cause a boot-time fight with an older Preware 1). Preware 1's postinst always copies it, so that side is fine.
+2. **Trade-off:** with `static`, a request made while the job is down **waits** instead of being served by a
+   hub-started copy. Combined with the postinst race seen at boot (the job was stopped and `/sbin/start` didn't
+   take for ~2 min), Preware would be unable to reach its service in that window. Pair it with a postinst that
+   waits until `status` knows the job again, then `start`s it and retries once.
+When committing `~/Projects/preware`, keep this dbus change **out of the 1.9.20 commit**.
+
+**Build recipe (build.sh alone is NOT enough):** `./build.sh arm` (it copies `source/bin/…arm` into
+place; delete the copied `source/bin/org.webosinternals.ipkgservice` afterwards). Then repack to 1.9.18's
+proven layout: `control.tar.gz` = the curated control (with `Source` and `Description`, taking
+`Installed-Size` from build.sh's control) + `./postinst` + `./prerm` from `source/control/`, root:root;
+ar members `debian-binary, control.tar.gz, data.tar.gz, pmPostInstall.script, pmPreRemove.script`.
+`build.sh` emits a bare `control.tar.gz` (no scripts; feed/ipkg installs need them) and, now that `keys/`
+exists, appends `cert.pem`/`pubkey.pem`/`signature.sha1`, which no shipped build has carried.
+`source/pmPostInstall.script` / `pmPreRemove.script` are symlinks to `control/postinst` / `control/prerm`.
 
 ## User-facing docs — separate repo `~/Projects/webos-docs` (MkDocs, `readthedocs` theme)
 
