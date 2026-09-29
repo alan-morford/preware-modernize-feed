@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/webos-internals/preware/refs/heads/master/icon.png">
+![icon](ipkgs/assets/icons/preware-icon.png)
 
 Packaging is done by Claude, old dead tools were too hard to use...
 
