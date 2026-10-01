@@ -566,6 +566,12 @@ floors) resolves.
     - The restored count differs from 3.0's: it sends the device **nduid** (`&device=`), and prefers the
       **package id** over the numeric catalog id that 3.0 sent. Both were flagged to the user; build 3
       shipped with them unchanged.
+- **Update 2026-10-01: the feed ships Preware 2 2.1.3** (`a6c1d415…`, 536,312B, built with
+  `build-legacy.sh` from webOS-ports/preware #57 on top of the merged #56), replacing 2.1.1. Besides #56's
+  UI changes it keeps the package service to one instance: `install-service.sh` installs the `Type=static`
+  dbus file when the installed one lacks it, and a new upstart job `preware2-service-guard` puts it back
+  after any Preware 1 install and stops an idle copy started by the hub. The service binary is unchanged
+  (`32611fac…`). Index stanza: only Version/MD5Sum/Size/Filename/LastUpdated changed.
 - **`com.palm.app.preware2`** ("Preware 2", **2.1.1**, arch `all` despite the `_arm` filename, 533KB,
   added 2026-09-27) — WebOS Ports' alternate, in-development Preware (Enyo 2.5, bundled as `build/enyo.js`).
   Bare control, no `Source`. **2.1.0 went live as delivered; 2.1.1 is OUR build** (`e6b5ae1f…`, 533,562B),
@@ -1883,6 +1889,14 @@ necessary-but-insufficient; the real fix is a binary patch of UpdateDaemon (forc
 carrier/roaming gating). Codepoet80 (the user) maintains the `webos-update-exploration` repo.
 
 ## Preware 1 (separate repo `~/Projects/preware` = `webOSArchive/preware`)
+
+**Update 2026-10-01: the feed ships Preware 1.9.21** (`fc9ad332…`, 397,616B), replacing 1.9.20. It is 1.9.20
+plus the `Type=static` dbus file below (b01da95, which the 1.9.20 ipk was built without), the version and a
+1.9.21 changelog line; repacked with the recipe at the end of this section (same control/postinst/prerm,
+no signing keys). Why: the ipkgservice respawn loop described under "FUTURE" was reproduced on CE 3.1.0
+and 3.0.5 TouchPads (updating Preware from Preware 2 triggered it every time), and `Type=static` stopped it.
+Preware 2 2.1.3 enforces the same line on devices with an older Preware. Report: Alan Morford's
+"ipkgservice respawn loop" write-up.
 
 The feed ships **Preware 1.9.20** (`8ee5f4e3…`, 397,650B, 2026-09-27), replacing 1.9.18. **Why 1.9.20 and
 not 1.9.19:** webOS CE 3.1.0 (build 86, BUILDMARK 600070) already **preloads Preware 1.9.19** from

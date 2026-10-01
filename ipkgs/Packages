@@ -251,28 +251,28 @@ Maintainer: N/A <nobody@example.com>
 Source: {"LastUpdated":"1790536461", "Type":"Application", "Feed":"WOSA Modernize", "Category":"Modernize", "Title":"webOS App Catalog (TouchPad)", "FullDescription":"Community updated Enyo-based webOS App Catalog (enyo-findapps) for the TouchPad, on webOS 3.0.x and webOS CE 3.1.0.<br><br><b>New in 6.2:</b> installs work again. HP's install service checked every package against signing servers that have been gone since 2015, so every install failed. The catalog now installs packages itself, and hands any package with install scripts to Preware. The Pivot magazine now downloads its latest edition after install instead of shipping it inside the app, which makes the app about 13MB smaller. Google Analytics tracking and the failing carrier data-connection lookup are removed, and the catalog now offers its own updates.", "MinWebOSVersion":"3.0.0", "MaxWebOSVersion":"3.9.9", "Icon":"http://stacks.webosarchive.org/feeds/modernize/ipkgs/assets/icons/webos-appcatalog.png"}
 
 Package: org.webosinternals.preware
-Version: 1.9.20
+Version: 1.9.21
 Depends: 
 Section: System Utilities
 Architecture: all
-MD5Sum: 8ee5f4e376240c442abf5c76e7702b77
-Size: 397650
-Filename: org.webosinternals.preware_1.9.20_arm.ipk
+MD5Sum: fc9ad3323a654dcea6ac2064abe2270e
+Size: 397616
+Filename: org.webosinternals.preware_1.9.21_arm.ipk
 Description: Preware homebrew package manager
 Maintainer: webOS Archive
-Source: {"LastUpdated":"1790540980", "Type":"Application", "Feed":"WOSA Modernize", "Category":"Modernize", "Title":"Preware", "FullDescription":"Preware, the webOS homebrew package manager (1.9.20). This build adds and enables the webOS Archive Modernize feed (TLS 1.2/1.3, root certificates, QupZilla, webOS CE) in the default feed set.<br><br><b>New since 1.9.18:</b> reads the OS version correctly on webOS CE 3.1.0, and turns the per-version patch and kernel feeds off there, since nothing is published for 3.1 (earlier builds added them with a broken address that failed on every Update Feeds). The package service no longer stops itself after a startup conflict, which could leave it parked on webOS CE. Uninstalling Preware now keeps the package service when Preware 2 is still installed. The App Museum feed is no longer offered, and is removed from Manage Feeds.", "PostInstallFlags":"RestartLuna", "PostUpdateFlags":"RestartLuna", "Icon":"http://stacks.webosarchive.org/feeds/modernize/ipkgs/assets/icons/preware-icon.png"}
+Source: {"LastUpdated":"1790874698", "Type":"Application", "Feed":"WOSA Modernize", "Category":"Modernize", "Title":"Preware", "FullDescription":"Preware, the webOS homebrew package manager (1.9.21). This build adds and enables the webOS Archive Modernize feed (TLS 1.2/1.3, root certificates, QupZilla, webOS CE) in the default feed set.<br><br><b>New since 1.9.18:</b> reads the OS version correctly on webOS CE 3.1.0, and turns the per-version patch and kernel feeds off there, since nothing is published for 3.1 (earlier builds added them with a broken address that failed on every Update Feeds). The package service no longer stops itself after a startup conflict, which could leave it parked on webOS CE. Uninstalling Preware now keeps the package service when Preware 2 is still installed. The App Museum feed is no longer offered, and is removed from Manage Feeds. <b>New in 1.9.21:</b> the package service no longer keeps restarting in the background after Preware is updated.", "PostInstallFlags":"RestartLuna", "PostUpdateFlags":"RestartLuna", "Icon":"http://stacks.webosarchive.org/feeds/modernize/ipkgs/assets/icons/preware-icon.png"}
 
 Package: com.palm.app.preware2
-Version: 2.1.1
+Version: 2.1.3
 Depends: 
 Section: System Utilities
 Architecture: all
-MD5Sum: e6b5ae1f2fd2f1ac7568c7f669a6c0f0
-Size: 533562
-Filename: com.palm.app.preware2_2.1.1_arm.ipk
+MD5Sum: a6c1d4159861e59623c707fda500ff2f
+Size: 536312
+Filename: com.palm.app.preware2_2.1.3_arm.ipk
 Description: Preware 2 homebrew package manager (alternate, in development)
 Maintainer: WebOS Ports
-Source: {"LastUpdated":"1790540980", "Type":"Application", "Feed":"WOSA Modernize", "Category":"Modernize", "Title":"Preware 2", "FullDescription":"An alternate version of Preware, the webOS homebrew package manager, currently in development by WebOS Ports. It installs alongside the original Preware and uses the same package service and feeds, including the webOS Archive Modernize feed.<br><br><b>Requires the Enyo library.</b> Compatible with webOS 2 and up.", "MinWebOSVersion":"2.0.0", "MaxWebOSVersion":"3.9.9", "PostInstallFlags":"RestartLuna", "PostUpdateFlags":"RestartLuna", "Icon":"http://stacks.webosarchive.org/feeds/modernize/ipkgs/assets/icons/preware2-icon.png"}
+Source: {"LastUpdated":"1790874698", "Type":"Application", "Feed":"WOSA Modernize", "Category":"Modernize", "Title":"Preware 2", "FullDescription":"An alternate version of Preware, the webOS homebrew package manager, currently in development by WebOS Ports. It installs alongside the original Preware and uses the same package service and feeds, including the webOS Archive Modernize feed.<br><br><b>Requires the Enyo library.</b> Compatible with webOS 2 and up.", "MinWebOSVersion":"2.0.0", "MaxWebOSVersion":"3.9.9", "PostInstallFlags":"RestartLuna", "PostUpdateFlags":"RestartLuna", "Icon":"http://stacks.webosarchive.org/feeds/modernize/ipkgs/assets/icons/preware2-icon.png"}
 
 Package: org.webosarchive.help-redirect
 Version: 1.0.0
