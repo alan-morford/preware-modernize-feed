@@ -253,7 +253,7 @@ use it on anything device-specific.
   version guard at the TOP of `postinst`, before any launcher edit — the payload alone is inert, the
   wiring is what breaks things. Not yet implemented; `mojomail-imap-tagfix`'s md5-guard is the
   in-repo precedent for the idea.
-- Precedent for the two-sided fence: `com.palm.app.findapps` (Min 2.2.4 / **Max 2.9.9**) vs
+- Precedent for the two-sided fence: `com.palm.app.findapps` (Min 1.4.0 / **Max 2.9.9**) vs
   `com.palm.app.enyo-findapps` (Min 3.0.0). Give the 2.x line `Max 2.9.9` so the mistake can't run
   the other direction.
 - **Use `Max 3.9.9`, NOT `3.0.9`.** Community convention (from 122 curated stanzas in the old
@@ -505,7 +505,8 @@ floors) resolves.
     - **`downloadmgr-tls13-phone` stays at 1.0.0 and that is correct** — per the user, the
       `curl_multi_remove_handle` crash **does not occur on the phones**, so there is nothing for a
       `phone` rebuild to fix and `tls-updates-phone` needs no floor. 1.1.0 is a topaz-only release.
-- **App Catalog:** `com.palm.app.findapps` (phones, Min 2.2.4/Max 2.9.9, icon webos-appcatalog-phone),
+- **App Catalog:** `com.palm.app.findapps` (phones, Min 1.4.0/Max 2.9.9, icon webos-appcatalog-phone;
+  Min lowered from 2.2.4 on 2026-10-01: the user confirmed 3.1.x, and Preware 1.9.x, work on webOS 1.4),
   `com.palm.app.enyo-findapps` (TouchPad, Min 3.0.0). These were stock Palm-packaged ipks with no
   `Source` — we injected one.
   - **`enyo-findapps` 6.0.2900 → 6.2.2928 (2026-09-27)**, user-built, ipk kept as-delivered (bare
