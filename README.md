@@ -33,6 +33,15 @@ are built and published but have not been tested on hardware yet — reports wel
 webOS 2.2.4 is required on the phones. An un-upgraded Veer (2.2.0) or Pre 2 (2.1.0) is not supported,
 and the packages are hidden on those so they cannot be installed by mistake.
 
+## webOS 2.1.0 (Pre 2, or a Pre / Pre Plus meta-doctored to 2.1.0)
+
+Install **V8 Fix for webOS 2.1.0**. webOS 2.1.0's JavaScript engine has a bug that breaks Enyo 2
+apps such as Preware 2: they open, but their screens stay broken. This package fixes that for all
+apps. It needs no other packages and is only shown on webOS 2.1.0.
+
+Install it with the original **Preware** or **WebOS Quick Install** (Preware 2 itself needs the fix
+before it can display), then restart Luna. Remove it from Preware.
+
 ## Also in the feed (install separately if you want them)
 
 - **Atlas** — a modern WPE WebKit browser, plus a patch to make it the default, or a gentler
