@@ -623,18 +623,22 @@ floors) resolves.
 - **`org.webosarchive.help-redirect`** (built + verified this session): patches `com.palm.app.help`
   `UrlManager.js` `helpUrl` (drives all content) + `HelpApp.js` palm.com domain check + device.do
   → `http://help.webosarchive.org`. Backs up `*.webosce-orig`, restores on removal, RestartLuna.
-- **`org.webosarchive.v8fix`** ("V8 Fix for webOS 2.1.0", **1.0.1**, arch `all`, 6KB, no `Depends`,
-  added 2026-10-02) — the only package for **webOS 2.1.0** (Pre 2, or a Pre / Pre Plus meta-doctored
-  to 2.1.0). 2.1.0's V8 (`/usr/lib/libv8.so`) mis-compiles `(c ? false : 0) || (x = y)` with its
+- **`org.webosarchive.v8fix`** ("V8 Fix for webOS 2.0 and 2.1", **1.0.2**, arch `all`, 7KB, no `Depends`,
+  added 2026-10-02 as 1.0.1 for 2.1.0 only; **1.0.2 (2026-10-03) widened it to 2.0.x-2.1.x**) — for
+  **webOS 2.0.0-2.1.2** (Pre 2, Veer on 2.1.2, or a Pre / Pre Plus / Pixi meta-doctored to 2.0/2.1). The
+  bug was confirmed in the 2.0.1, 2.1.0 and 2.1.2 doctors (their own node + libv8 under qemu-arm; 2.1.2's
+  libv8 is byte-identical to 2.1.0's apart from the debuglink CRC) and on a real Veer on 2.1.2; the
+  2.2.0 and 2.2.3 doctors ship a newer libv8 (4,092,932B) without it. That V8 (`/usr/lib/libv8.so`) mis-compiles `(c ? false : 0) || (x = y)` with its
   classic code generator; uglified Enyo 2 `enyo.mixin` has that shape, so Enyo 2 apps (Preware 2,
   Dash Weather, ...) render broken. The postinst appends `--always_full_compiler` to the `[JavaScript]
   Flags=` line of `/etc/palm/browser.conf` (LunaSysMgr only; BrowserServer's `browser-app.conf` is
   untouched). Two guards at the top of the postinst, because Max is soft and WOSQI/ipkg skip the index:
-  `PRODUCT_VERSION_STRING` must be exactly `2.1.0`, and a node probe (node links the same `libv8.so`)
+  `PRODUCT_VERSION_STRING` must be `2.0.*` or `2.1.*` (1.0.1: exactly `2.1.0`), and a node probe (node links the same `libv8.so`)
   must show the bug AND show the flag fixes it. Backup `browser.conf.v8fix-orig`; prerm removes only
-  the flag token (no Luna restart in prerm). Index gate **Min 2.1.0 / Max 2.1.0**, deliberately **no
-  `DeviceCompatibility`** (the bug is OS-level, any 2.1.0 hardware qualifies, and the list is as soft
-  as Max). Verified on a meta-doctored Pre Plus (`modelNameAscii` "Pre", machineName `castle`):
+  the flag token (no Luna restart in prerm). Index gate **Min 2.0.0 / Max 2.1.2** (1.0.1 was Min=Max
+  2.1.0), deliberately **no `DeviceCompatibility`** (the bug is OS-level, any 2.0/2.1 hardware
+  qualifies, and the list is as soft as Max). The Veer needed a phone restart after a WOSQI install of
+  1.0.0, hence the "or restart the phone" wording. Verified on a meta-doctored Pre Plus (`modelNameAscii` "Pre", machineName `castle`):
   install via appinstaller and via ipkgservice, upgrade 1.0.0→1.0.1, remove via ipkgservice (file
   byte-identical afterwards). ⚠️ The Palm appinstaller *refuses to remove* it (`returnValue: false`,
   no `appinfo.json`); Preware's ipkgservice removes it fine. Preware 2 cannot install it on an
