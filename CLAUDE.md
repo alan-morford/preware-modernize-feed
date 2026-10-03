@@ -385,7 +385,7 @@ floors) resolves.
   `c931…` (the bricked one). No hostnames set, so they're hard to tell apart — check health first
   (`hostname`, version, `ps | grep LunaSysMgr`, installed pkgs) before patching.
 
-## Package inventory (single feed = 72 packages / 95 stanzas — Atlas, btgamepad, media-tls13 and each of the
+## Package inventory (single feed = 73 packages / 96 stanzas — Atlas, btgamepad, media-tls13 and each of the
 20 Synergy connectors have two; phones detailed below)
 
 - **nizovn stack** (hand-curated stanzas): cacert, glibc, openssl, qt5* (`qt5qpaplugins` **1.0.4**,
@@ -623,6 +623,29 @@ floors) resolves.
 - **`org.webosarchive.help-redirect`** (built + verified this session): patches `com.palm.app.help`
   `UrlManager.js` `helpUrl` (drives all content) + `HelpApp.js` palm.com domain check + device.do
   → `http://help.webosarchive.org`. Backs up `*.webosce-orig`, restores on removal, RestartLuna.
+- **`org.webosarchive.v8fix`** ("V8 Fix for webOS 2.0 and 2.1", **1.0.2**, arch `all`, 7KB, no `Depends`,
+  added 2026-10-02 as 1.0.1 for 2.1.0 only; **1.0.2 (2026-10-03) widened it to 2.0.x-2.1.x**) — for
+  **webOS 2.0.0-2.1.2** (Pre 2, Veer on 2.1.2, or a Pre / Pre Plus / Pixi meta-doctored to 2.0/2.1). The
+  bug was confirmed in the 2.0.1, 2.1.0 and 2.1.2 doctors (their own node + libv8 under qemu-arm; 2.1.2's
+  libv8 is byte-identical to 2.1.0's apart from the debuglink CRC) and on a real Veer on 2.1.2; the
+  2.2.0 and 2.2.3 doctors ship a newer libv8 (4,092,932B) without it. That V8 (`/usr/lib/libv8.so`) mis-compiles `(c ? false : 0) || (x = y)` with its
+  classic code generator; uglified Enyo 2 `enyo.mixin` has that shape, so Enyo 2 apps (Preware 2,
+  Dash Weather, ...) render broken. The postinst appends `--always_full_compiler` to the `[JavaScript]
+  Flags=` line of `/etc/palm/browser.conf` (LunaSysMgr only; BrowserServer's `browser-app.conf` is
+  untouched). Two guards at the top of the postinst, because Max is soft and WOSQI/ipkg skip the index:
+  `PRODUCT_VERSION_STRING` must be `2.0.*` or `2.1.*` (1.0.1: exactly `2.1.0`), and a node probe (node links the same `libv8.so`)
+  must show the bug AND show the flag fixes it. Backup `browser.conf.v8fix-orig`; prerm removes only
+  the flag token (no Luna restart in prerm). Index gate **Min 2.0.0 / Max 2.1.2** (1.0.1 was Min=Max
+  2.1.0), deliberately **no `DeviceCompatibility`** (the bug is OS-level, any 2.0/2.1 hardware
+  qualifies, and the list is as soft as Max). **1.0.2 uses `RestartDevice`** for Post{Install,Update,Remove}Flags
+  (1.0.1: `RestartLuna`), so Preware prompts for a reboot: the Veer on 2.1.2 needed a full reboot before
+  the fix applied. Verified on a meta-doctored Pre Plus (`modelNameAscii` "Pre", machineName `castle`):
+  install via appinstaller and via ipkgservice, upgrade 1.0.0→1.0.1, remove via ipkgservice (file
+  byte-identical afterwards). ⚠️ The Palm appinstaller *refuses to remove* it (`returnValue: false`,
+  no `appinfo.json`); Preware's ipkgservice removes it fine. Preware 2 cannot install it on an
+  unfixed 2.1.0 device (it is the app that's broken), so users need Preware 1 or WOSQI. Source,
+  probes and the OFF/ON test results (90 launches, no regressions, RSS unchanged):
+  `github.com/alan-morford/enyofix`.
 - **`org.webosarchive.tls-updates`** (`" TLS 1.3 Updates (TouchPad)"` — ⚠️ deliberate leading
   space, see the sorting note above; **1.0.20**) — **meta** package
   (README-only payload; it gained a `postinst` in 1.0.18, see below)
