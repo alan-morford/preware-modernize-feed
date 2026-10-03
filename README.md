@@ -41,8 +41,8 @@ fixes that for all apps. It needs no other packages and is only shown on webOS 2
 webOS 2.2 and later do not have the bug.
 
 Install it with the original **Preware** or **WebOS Quick Install** (Preware 2 itself needs the fix
-before it can display), then restart Luna, or restart the phone if Enyo 2 apps still look broken.
-Remove it from Preware.
+before it can display). After installing this package, Preware prompts you to reboot the device;
+reboot so the fix takes effect (with WebOS Quick Install, reboot by hand). Remove it from Preware.
 
 ## Also in the feed (install separately if you want them)
 

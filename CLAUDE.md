@@ -637,8 +637,9 @@ floors) resolves.
   must show the bug AND show the flag fixes it. Backup `browser.conf.v8fix-orig`; prerm removes only
   the flag token (no Luna restart in prerm). Index gate **Min 2.0.0 / Max 2.1.2** (1.0.1 was Min=Max
   2.1.0), deliberately **no `DeviceCompatibility`** (the bug is OS-level, any 2.0/2.1 hardware
-  qualifies, and the list is as soft as Max). The Veer needed a phone restart after a WOSQI install of
-  1.0.0, hence the "or restart the phone" wording. Verified on a meta-doctored Pre Plus (`modelNameAscii` "Pre", machineName `castle`):
+  qualifies, and the list is as soft as Max). **1.0.2 uses `RestartDevice`** for Post{Install,Update,Remove}Flags
+  (1.0.1: `RestartLuna`), so Preware prompts for a reboot: the Veer on 2.1.2 needed a full reboot before
+  the fix applied. Verified on a meta-doctored Pre Plus (`modelNameAscii` "Pre", machineName `castle`):
   install via appinstaller and via ipkgservice, upgrade 1.0.0→1.0.1, remove via ipkgservice (file
   byte-identical afterwards). ⚠️ The Palm appinstaller *refuses to remove* it (`returnValue: false`,
   no `appinfo.json`); Preware's ipkgservice removes it fine. Preware 2 cannot install it on an
